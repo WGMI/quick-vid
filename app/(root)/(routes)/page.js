@@ -79,8 +79,8 @@ const Landing = () => {
                 <div className="grid grid-cols-1 gap-6">
                   <div className="bg-[#0d1117] rounded-lg p-6 shadow-lg">
                     <p className="text-[#ffd700] italic">
-                      "QuickVid has completely transformed my video marketing strategy. It's so easy to use and the
-                      results are amazing!"
+                      QuickVid has completely transformed my video marketing strategy. It's so easy to use and the
+                      results are amazing!
                     </p>
                     <div className="flex items-center gap-4 mt-4">
                       <Avatar>
@@ -95,8 +95,8 @@ const Landing = () => {
                   </div>
                   <div className="bg-[#0d1117] rounded-lg p-6 shadow-lg">
                     <p className="text-[#ffd700] italic">
-                      "I never thought I could create such high-quality videos for my business, but QuickVid made it a
-                      breeze. Highly recommended!"
+                      I never thought I could create such high-quality videos for my business, but QuickVid made it a
+                      breeze. Highly recommended!
                     </p>
                     <div className="flex items-center gap-4 mt-4">
                       <Avatar>

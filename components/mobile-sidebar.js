@@ -6,6 +6,7 @@ const MobileSidebar = () => {
         <nav className="grid gap-6 text-lg font-medium">
             {routes.map((route) => (
                 <Link
+                    key={route.name}
                     href={route.path}
                     className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
@@ -15,6 +16,7 @@ const MobileSidebar = () => {
             ))}
             {bottomRoutes.map((route) => (
                 <Link
+                    key={route.name}
                     href={route.path}
                     className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >

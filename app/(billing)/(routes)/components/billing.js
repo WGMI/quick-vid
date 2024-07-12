@@ -150,7 +150,7 @@ const Billing = ({ transactions, usercredits }) => {
                                     </TableHeader>
                                     <TableBody>
                                         {transactions.map((item) => (
-                                            <TableRow>
+                                            <TableRow key={item.id}>
                                                 <TableCell className="font-medium">{item.invoice_id}</TableCell>
                                                 <TableCell>
                                                     <Badge variant="secondary">{item.status}</Badge>
