@@ -68,14 +68,14 @@ const Landing = () => {
                   <RocketIcon className="h-12 w-12 text-[#ffd700]" />
                   <h3 className="text-xl font-bold">Instant Publishing</h3>
                   <p className="text-center text-[#ffd700]">
-                    Publish your videos directly to your social media channels with just a few clicks.
+                    Download and publish your videos to your social media channels with just a few clicks.
                   </p>
                 </div>
               </div>
             </section>
             <section className="px-4 py-12 md:py-20 bg-gradient-to-b from-[#161b22] to-[#0d1117]">
               <div className="max-w-md mx-auto flex flex-col items-center gap-8">
-                <h2 className="text-3xl md:text-4xl font-bold text-[#ffd700] text-center">What Our Customers Say</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-[#ffd700] text-center">What Are People Saying</h2>
                 <div className="grid grid-cols-1 gap-6">
                   <div className="bg-[#0d1117] rounded-lg p-6 shadow-lg">
                     <p className="text-[#ffd700] italic">
@@ -85,15 +85,15 @@ const Landing = () => {
                     <div className="flex items-center gap-4 mt-4">
                       <Avatar>
                         {/* <AvatarImage src="/placeholder-user.jpg" /> */}
-                        <AvatarFallback>JD</AvatarFallback>
+                        <AvatarFallback>WG</AvatarFallback>
                       </Avatar>
                       <div>
-                        <h4 className="font-bold">John Doe</h4>
-                        <p className="text-sm text-[#ffd700]">Marketing Manager</p>
+                        <h4 className="font-bold">Will Gabriel</h4>
+                        <p className="text-sm text-[#ffd700]">Web Developer</p>
                       </div>
                     </div>
                   </div>
-                  <div className="bg-[#0d1117] rounded-lg p-6 shadow-lg">
+                  {/* <div className="bg-[#0d1117] rounded-lg p-6 shadow-lg">
                     <p className="text-[#ffd700] italic">
                       I never thought I could create such high-quality videos for my business, but QuickVid made it a
                       breeze. Highly recommended!
@@ -108,11 +108,11 @@ const Landing = () => {
                         <p className="text-sm text-[#ffd700]">Small Business Owner</p>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </section>
-            <section className="px-4 py-12 md:py-20 flex flex-col items-center gap-6">
+            {/* <section className="px-4 py-12 md:py-20 flex flex-col items-center gap-6">
               <h2 className="text-3xl md:text-4xl font-bold text-[#ffd700] text-center">Get Started Today</h2>
               <p className="text-lg md:text-xl text-center max-w-md">
                 Sign up for our AI-powered video creator and start creating stunning videos for your business.
@@ -127,13 +127,13 @@ const Landing = () => {
                   Get Started
                 </Button>
               </form>
-            </section>
+            </section> */}
             <section className="px-4 py-12 md:py-20 flex flex-col items-center gap-6">
               <h2 className="text-3xl md:text-4xl font-bold text-[#ffd700] text-center">Example Video</h2>
               <div className="w-full max-w-2xl rounded-lg overflow-hidden">
                 <video
                   className="w-full aspect-video"
-                  src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                  src="http://res.cloudinary.com/dbx94d5qu/video/upload/v1721829970/New%20Project-814723.mp4"
                   controls
                 />
               </div>
@@ -144,7 +144,7 @@ const Landing = () => {
               <VideoIcon className="h-6 w-6 text-[#ffd700]" />
               <span className="text-lg font-bold">QuickVid</span>
             </div>
-            <p className="text-sm text-[#ffd700]">&copy; 2024 QuickVid. All rights reserved.</p>
+            <p className="text-sm text-[#ffd700]">&copy; 2024 Nubian Technology. All rights reserved.</p>
           </footer>
         </div>
       )

@@ -5,12 +5,14 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { CircleX, Copy } from 'lucide-react'
 import { useState } from 'react'
+import { Bars, TailSpin } from "react-loader-spinner";
 import axios from 'axios'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/dialog'
 import Link from 'next/link'
+import { v4 as uuidv4 } from 'uuid' 
 
 const NewProject = () => {
-    const [projectName, setProjectName] = useState("New Project-" + Math.floor(Math.random() * 1000000))
+    const [projectName, setProjectName] = useState("New Project-" + uuidv4())
     const [description, setDescription] = useState("")
     const [prompt, setPrompt] = useState('')
     const [showPromptForm, setShowPromptForm] = useState(true)
@@ -98,7 +100,7 @@ const NewProject = () => {
     const generateImages = async (themes) => {
         if (themes.length < 1) return
 
-        try{
+        try {
             await axios.post("/api/prompt/images", { themes }).then((res) => {
                 if (res.status == 200) {
                     if (res.data.message == 'Low Credits. Please top up your account.') {
@@ -110,7 +112,7 @@ const NewProject = () => {
                 }
             })
         }
-        catch(e){
+        catch (e) {
             setVideoLoading(false)
             console.log("Error generating images:", e)
             alert("Error generating images: " + e)
@@ -225,6 +227,19 @@ const NewProject = () => {
             {(!isValid && script.length > 0) && <p className='text-red-500'>Textarea must be at least 50 characters long</p>}
             <div className='flex justify-center w-full'>
                 {isValid && <Button className="my-5 py-2 rounded-md" onClick={generateThemes} disabled={videoloading}>{videoloading ? 'Generating...' : 'Generate Video'}</Button>}
+                {videoloading ? <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <div className="p-4 rounded shadow-lg">
+                        <Bars
+                            height="80"
+                            width="80"
+                            color="#ffd700"
+                            ariaLabel="bars-loading"
+                            wrapperStyle={{}}
+                            wrapperClass=""
+                            visible={true}
+                        />
+                    </div>
+                </div> : <></>}
             </div>
         </div>
     )
