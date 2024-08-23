@@ -1,11 +1,11 @@
 "use client"
 
-import { Eye, Grid, List, MoreHorizontal, PenIcon, Share2, Trash2, X } from "lucide-react"
+import { Eye, Grid, List, MoreHorizontal, PenIcon, RotateCcw, Share2, Trash2, X } from "lucide-react"
 import Image from "next/image"
 import { Button } from "./ui/button"
 import { Card, CardContent, CardHeader } from "./ui/card"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Dialog, DialogContent } from '@/components/ui/dialog'
@@ -22,7 +22,57 @@ const Videos = ({ data }) => {
     const [newDescription, setNewDescription] = useState("")
     const [editingTarget, setEditingTarget] = useState(null)
 
+    useEffect(() => {
+        let incompleteVideos = []
+        data.forEach(e => {
+            if (!e.url.includes("http:")) {
+                console.log(e)
+                incompleteVideos.push(e)
+            }
+        })
+    }, [])
+
     const truncate = (str, n) => str?.length > n ? str.substr(0, n - 1) + "..." : str
+
+    const refresh = async (url) => {
+        try {
+            const response = await axios.get('/api/project/status', {
+                params: {
+                    url: url,
+                },
+            });
+            console.log(response.data.url.status)
+            switch (response.data.url.status) {
+                case 'not_found':
+                    alert('Something went wrong. The video cannot be found.')
+                    break;
+                case 'in_progress':
+                    alert('The video is being created. Refresh again to check.')
+                    break
+                default:
+                    if(response.data.url.status.includes('http')){
+                        const project = data.find(item => item.url === url)
+                        try {
+                            const values = project
+                            values.url = response.data.url.status
+                            await axios.post("/api/project/update", values).then((res) => {
+                                if (res.status == 200) {
+                                    router.refresh()
+                                }
+                            })
+                        } catch (error) {
+                            
+                        }
+                    }
+                    break;
+            }
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching project status:', error);
+            throw error;
+        }
+    }
+
 
     const handleCopy = (text) => {
         navigator.clipboard.writeText(text)
@@ -47,7 +97,7 @@ const Videos = ({ data }) => {
 
     const editVideo = async () => {
         let item = data.find(item => item.id === editingTarget)
-        if(!newTitle && !newDescription){
+        if (!newTitle && !newDescription) {
             setEditingTarget(null)
             return
         }
@@ -94,9 +144,13 @@ const Videos = ({ data }) => {
 
     const Controls = ({ item, direction }) => (
         <div className={cn("flex justify-center items-center space-y-2", direction === "row" ? "flex-row" : "flex-col")}>
-            <Button onClick={() => showVideo(item)} className="text-gray-500 hover:text-gray-700 bg-transparent">
-                <Eye className="w-5 h-5" />
-            </Button>
+            {item.url.includes('http') ?
+                <Button onClick={() => showVideo(item)} className="text-gray-500 hover:text-gray-700 bg-transparent">
+                    <Eye className="w-5 h-5" />
+                </Button>
+                :
+                <Button onClick={() => refresh(item.url)} className="text-[#ffd700] bg-transparent border border-[#ffd700] hover:text-white hover:bg-[#ffd700]"><RotateCcw className="h-5 w-5" /></Button>
+            }
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button className="text-gray-500 hover:text-gray-700 bg-transparent">

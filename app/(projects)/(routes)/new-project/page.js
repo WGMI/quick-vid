@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { CircleX, Copy } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Bars, TailSpin } from "react-loader-spinner";
 import axios from 'axios'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/dialog'
@@ -22,7 +22,6 @@ const NewProject = () => {
     const [isValid, setIsValid] = useState(false)
     const [showDialog, setShowDialog] = useState(false)
     const [generatedVideoUrl, setGeneratedVideoUrl] = useState("")
-    const [copied, setCopied] = useState(false)
 
     const wordcount = () => (script.length == 0) ? 0 : script.trim().split(/\s+/).length
 
@@ -172,15 +171,15 @@ const NewProject = () => {
                 <DialogContent>
                     <DialogHeader>Success</DialogHeader>
                     <DialogDescription>
-                        Your video has been created and saved.
+                        Your video is being created and will be saved.
                         <br />
                         <Link className="underline" href="/dashboard">Return Home</Link>
                     </DialogDescription>
                     <DialogFooter>
-                        <Button onClick={handleCopy}>
+                        {/* <Button onClick={handleCopy}>
                             <Copy />&nbsp;
                             {copied ? 'Copied!' : 'Copy Link'}
-                        </Button>
+                        </Button> */}
                         <Button onClick={() => setShowDialog(false)}>Close</Button>
                     </DialogFooter>
                 </DialogContent>
