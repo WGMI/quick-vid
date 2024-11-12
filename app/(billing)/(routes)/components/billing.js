@@ -10,6 +10,9 @@ import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import UploadFile from './UploadFile'
+
+import * as XLSX from 'xlsx';
 
 const Billing = ({ transactions, usercredits }) => {
     const router = useRouter()
@@ -17,6 +20,8 @@ const Billing = ({ transactions, usercredits }) => {
     const [showSuccessDialog, setShowSuccessDialog] = useState(false)
     const [credits, setCredits] = useState(0)
     const [phoneNumber, setPhoneNumber] = useState('')
+
+    const [fileData, setFileData] = useState(null)
 
     const calculateCost = () => { return credits }
     const calculateVideos = () => { return Math.floor(credits / 100) }
@@ -41,13 +46,13 @@ const Billing = ({ transactions, usercredits }) => {
         }
     }
 
-    const refreshInvoice = async (status,invoiceNo) => {
+    const refreshInvoice = async (status, invoiceNo) => {
         try {
             const res = await axios.post("api/payment/status", { invoiceNo })
 
-            if (res.status === 200) {   
-                if(res.data.data.invoice.state != status){
-                    updateTransaction(invoiceNo,res.data.data.invoice.state)
+            if (res.status === 200) {
+                if (res.data.data.invoice.state != status) {
+                    updateTransaction(invoiceNo, res.data.data.invoice.state)
                 }
             }
 
@@ -56,14 +61,45 @@ const Billing = ({ transactions, usercredits }) => {
         }
     }
 
-    const updateTransaction = async (invoiceNo,status) => {
+    const updateTransaction = async (invoiceNo, status) => {
         try {
-            await axios.put("api/payment/update", {invoiceNo,status})
+            await axios.put("api/payment/update", { invoiceNo, status })
             router.refresh()
         } catch (error) {
             alert("Something went wrong. Please try again.\n" + error.message);
         }
     }
+
+    const payAll = async () => {
+        try {
+            await axios.post("api/payment/payall",{fileData})
+            router.refresh()
+        } catch (error) {
+            alert("Something went wrong. Please try again.\n" + error.message);
+        }
+    }
+
+    const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            const binaryStr = e.target.result;
+            const workbook = XLSX.read(binaryStr, { type: 'binary' });
+
+            // Assuming the first sheet contains the data
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+
+            // Convert the sheet data to JSON
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }).slice(1);
+            setFileData(jsonData);
+
+            console.log('File Data as JSON:', jsonData);
+        };
+
+        reader.readAsBinaryString(file);
+    };
 
     return (
         <div className="flex min-h-screen w-full bg-muted/40">
@@ -110,10 +146,10 @@ const Billing = ({ transactions, usercredits }) => {
             <div className="flex-1 p-6 sm:p-10">
                 <div className="mx-auto max-w-4xl">
                     <div className="mb-8 flex items-center justify-between">
-                        <h1 className="text-2xl font-bold">Billing</h1>
+                        <h1 className="text-2xl font-bold">Payments</h1>
                     </div>
                     <div className="grid gap-8">
-                        <Card>
+                        {/* <Card>
                             <CardHeader>
                                 <CardTitle>Credits</CardTitle>
                                 <CardDescription>Manage and purchase your credits.</CardDescription>
@@ -130,38 +166,61 @@ const Billing = ({ transactions, usercredits }) => {
                                     </div>
                                 </div>
                             </CardContent>
+                        </Card> */}
+
+                        <Card className="border-blue-300 shadow-md shadow-blue-100">
+                            <CardHeader className="border-b border-blue-100">
+                                <CardTitle className="text-blue-700">Upload payroll file</CardTitle>
+                            </CardHeader>
+                            <CardContent className="pt-6">
+                                <form className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="payroll-file" className="text-blue-600">Choose file</Label>
+                                        <Input
+                                            id="payroll-file"
+                                            type="file"
+                                            accept=".csv,.xlsx,.xls"
+                                            onChange={handleFileUpload}
+                                            className="cursor-pointer file:bg-blue-50 file:text-blue-700 file:border-blue-200 hover:file:bg-blue-100"
+                                        />
+                                    </div>
+                                </form>
+                            </CardContent>
                         </Card>
                         <Card>
                             <CardHeader className="px-7">
-                                <CardTitle>Invoices</CardTitle>
-                                <CardDescription>View and manage your invoices. Click Refresh to check the status of your transaction and have your credits added.</CardDescription>
+                                <CardTitle>Payroll</CardTitle>
+                                <Button className="w-[200px] bg-blue-600 hover:bg-blue-700" onClick={() => payAll()}>Pay All</Button>
+                                {/* <CardDescription>View and manage your invoices. Click Refresh to check the status of your transaction and have your credits added.</CardDescription> */}
                             </CardHeader>
                             <CardContent>
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>Invoice ID</TableHead>
-                                            <TableHead>Status</TableHead>
-                                            <TableHead>Credits</TableHead>
+                                            <TableHead>Name</TableHead>
+                                            <TableHead>ID</TableHead>
+                                            <TableHead>NSSF</TableHead>
+                                            <TableHead>NHIF</TableHead>
+                                            <TableHead>Phone Number</TableHead>
                                             <TableHead>Amount</TableHead>
-                                            <TableHead>Date</TableHead>
-                                            <TableHead>Refresh Status</TableHead>
+                                            <TableHead>Action</TableHead>
                                         </TableRow>
                                     </TableHeader>
-                                    <TableBody>
-                                        {transactions.map((item) => (
-                                            <TableRow key={item.id}>
-                                                <TableCell className="font-medium">{item.invoice_id}</TableCell>
-                                                <TableCell>
-                                                    <Badge variant="secondary">{item.status}</Badge>
-                                                </TableCell>
-                                                <TableCell>{item.credit_count}</TableCell>
-                                                <TableCell>{item.amount}</TableCell>
-                                                <TableCell>{item.createdAt.toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}</TableCell>
-                                                <TableCell><Button onClick={() => refreshInvoice(item.status,item.invoice_id)}>Refresh</Button></TableCell>
+                                    {
+                                        fileData && <TableBody>
+                                        {fileData.map((item, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>{item[0]}</TableCell>
+                                                <TableCell>{item[1]}</TableCell>
+                                                <TableCell>{item[2]}</TableCell>
+                                                <TableCell>{item[3]}</TableCell>
+                                                <TableCell>{item[4]}</TableCell>
+                                                <TableCell>{item[5]}</TableCell>
+                                                <TableCell><Button className="w-full bg-blue-600 hover:bg-blue-700">Pay</Button></TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
+                                    }
                                 </Table>
                             </CardContent>
                         </Card>
